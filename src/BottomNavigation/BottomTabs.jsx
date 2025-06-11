@@ -2,44 +2,13 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useSelector } from 'react-redux';
+import Dashboard from '../Screens/Dashboard';
+import Resume from '../Screens/Resume';
+import Profile from '../Screens/Profile';
+import Training from '../Screens/Training';
 
 const Tab = createBottomTabNavigator();
 
-// Dummy screen components
-function DashboardScreen() {
-    const { user, token } = useSelector((state) => state.auth);
-    console.log('Logged-in user:', user);
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Dashboard</Text>
-    </View>
-  );
-}
-
-function ResumeScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Resume</Text>
-    </View>
-  );
-}
-
-function ProfileScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Profile</Text>
-    </View>
-  );
-}
-
-function TrainingScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Training</Text>
-    </View>
-  );
-}
 
 const BottomTabs = () => {
   return (
@@ -69,10 +38,10 @@ const BottomTabs = () => {
         tabBarInactiveTintColor: 'gray',
       })}
     >
-      <Tab.Screen name="Dashboard" component={DashboardScreen} />
-      <Tab.Screen name="Resume" component={ResumeScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
-      <Tab.Screen name="Training" component={TrainingScreen} />
+      <Tab.Screen name="Dashboard" component={Dashboard} options={{headerShown: false}} />
+      <Tab.Screen name="Resume" component={Resume} options={{headerShown: false}} />
+      <Tab.Screen name="Profile" component={Profile} options={{headerShown: false}} />
+      <Tab.Screen name="Training" component={Training} options={{headerShown: false}} />
     </Tab.Navigator>
   );
 };
