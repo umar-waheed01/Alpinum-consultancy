@@ -3,14 +3,57 @@ import { View, Text, Image, StyleSheet, Alert, TouchableOpacity } from 'react-na
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useDispatch, useSelector } from 'react-redux';
+import { setToken } from '../context/slice';
+import Toast from 'react-native-toast-message';
+
 
 const TopHeader = ({ title }) => {
+  const token = useSelector((state) => state.auth.token);
+  const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const handleLogout = () => {
-    Alert.alert('Logged out');
-    navigation.replace('Login');
-  };
+  const handleLogout = async (e) => {
+  try {
+    const res = await fetch("https://alpinum-consulting.vercel.app/api/auth/sign-out", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const result = await res.json();
+    console.log("++++++++++++++", result);
+
+    if (!res.ok) {
+      Toast.show({
+        type: 'error',
+        text1: 'Logout Failed',
+        text2: result.error || 'Something went wrong.',
+      });
+      return;
+    }
+
+    if (res.status === 200) {
+      Toast.show({
+        type: 'success',
+        text1: 'Logged Out',
+        text2: result.message || 'You have been logged out.',
+      });
+
+      dispatch(setToken(null));
+      navigation.replace('Login');
+    }
+  } catch (error) {
+    Toast.show({
+      type: 'error',
+      text1: 'Error',
+      text2: error.message || 'Something went wrong.',
+    });
+  }
+};
+
 
   const handleChangePassword = () => {
     navigation.navigate('ChangePassword');

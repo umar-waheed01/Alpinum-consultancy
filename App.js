@@ -10,6 +10,7 @@ import store from "./src/context/store.jsx";
 import { MenuProvider } from "react-native-popup-menu";
 import ChangePassword from "./src/Components/ChnagePassword.jsx";
 import ResumeDetail from "./src/Screens/ResumeDetail.jsx";
+import Toast from 'react-native-toast-message';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +30,7 @@ export default function App() {
             <Stack.Screen name="ChangePassword" component={ChangePassword} />
             <Stack.Screen name="ResumeDetail" component={ResumeDetail} />
           </Stack.Navigator>
+          <Toast/>
         </NavigationContainer>
       </MenuProvider>
     </Provider>

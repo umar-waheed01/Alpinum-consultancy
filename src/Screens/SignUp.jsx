@@ -5,11 +5,11 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   ActivityIndicator,
   ScrollView,
   Image,
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 export default function SignUp({ navigation }) {
   const [activeTab, setActiveTab] = useState('Contractor');
@@ -28,17 +28,29 @@ export default function SignUp({ navigation }) {
 
   const handleSubmit = async () => {
     if (!agreeTerms) {
-      Alert.alert('Error', 'You must agree to the Terms of User');
+      Toast.show({
+      type: 'error',
+      text1: 'Terms Required',
+      text2: 'You must agree to the Terms of User',
+    });
       return;
     }
 
     if (!formData.email || !formData.password || !formData.confirmPassword) {
-      Alert.alert('Error', 'Please fill all required fields.');
+      Toast.show({
+      type: 'error',
+      text1: 'Missing Fields',
+      text2: 'Please fill all required fields.',
+    });
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match.');
+      Toast.show({
+      type: 'error',
+      text1: 'Password Mismatch',
+      text2: 'Passwords do not match.',
+    });
       return;
     }
 
@@ -79,14 +91,26 @@ export default function SignUp({ navigation }) {
       console.log("data+++",data)
 
       if (res.ok) {
-        Alert.alert('Success', 'Account created!');
+        Toast.show({
+        type: 'success',
+        text1: 'Welcome',
+        text2: 'Account Created Successfully!',
+      });
         navigation.navigate('Login');
       } else {
-        Alert.alert('Failed', data.message || 'Signup failed.');
+        Toast.show({
+        type: 'error',
+        text1: 'Signup Failed',
+        text2: data.message || 'Signup failed.',
+      });
       }
     } catch (err) {
       console.error(err);
-      Alert.alert('Error', 'Network error.');
+      Toast.show({
+      type: 'error',
+      text1: 'Network Error',
+      text2: 'Please try again later.',
+    });
     } finally {
       setLoading(false);
     }

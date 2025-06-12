@@ -5,10 +5,10 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
   StyleSheet,
   Image,
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 export default function ForgotPassword({ navigation }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -33,14 +33,26 @@ export default function ForgotPassword({ navigation }) {
       const result = await response.json();
 
       if (!response.ok) {
-       Alert.alert('Error', result?.error || 'Something went wrong');
+       Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: result?.error || 'Something went wrong',
+      });
        return
       }
 
-      Alert.alert('Success', result.message || 'Check your email.');
+      Toast.show({
+      type: 'success',
+      text1: 'Success',
+      text2: result.message || 'Check your email.',
+    });
     } catch (err) {
       console.error("err", err);
-      Alert.alert("Error", err.message || "Something went wrong during login");
+      Toast.show({
+      type: 'error',
+      text1: 'Error',
+      text2: err.message || 'Something went wrong during password reset',
+    });
     } finally {
       setIsLoading(false);
     }

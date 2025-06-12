@@ -7,7 +7,7 @@ import TopHeader from "../Components/TopHeader";
 
 export default function Dashboard() {
   const navigation = useNavigation();
-  const { user, token } = useSelector((state) => state.auth);
+  const user = useSelector((state) => state.auth.user);
 
   //   useEffect(() => {
   //     if (user?.role !== "CONTRACTOR") {

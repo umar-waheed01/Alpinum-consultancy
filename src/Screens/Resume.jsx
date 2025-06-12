@@ -11,12 +11,13 @@ import {
   ScrollView,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-// import DocumentPicker from 'react-native-document-picker';
 import { useSelector } from "react-redux";
 import TopHeader from "../Components/TopHeader";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import * as DocumentPicker from "expo-document-picker";
 import RNPickerSelect from "react-native-picker-select";
+import * as FileSystem from 'expo-file-system';
+import {shareAsync} from 'expo-sharing';
 
 export default function Resume({ navigation }) {
   const { token } = useSelector((state) => state.auth);
@@ -41,7 +42,7 @@ export default function Resume({ navigation }) {
       const result = await DocumentPicker.getDocumentAsync({
         type: [
           "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        ], // .docx
+        ],
         copyToCacheDirectory: true,
         multiple: false,
       });
@@ -68,39 +69,83 @@ export default function Resume({ navigation }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = () => {
-    const {
-      experience,
-      rate,
-      currency,
-      country,
-      city,
-      maxDays,
-      willingToRelocate,
-    } = formData;
-    if (
-      !experience ||
-      !rate ||
-      !currency ||
-      !country ||
-      !city ||
-      !maxDays ||
-      !willingToRelocate
-    ) {
-      Alert.alert("Validation Error", "Please fill all fields.");
-      return;
-    }
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      Alert.alert("Success", "Resume submitted successfully!");
-      navigation.navigate("ResumeDetail");
-    }, 1500);
-  };
+  const handleSubmit = async () => {
+  const {
+    experience,
+    rate,
+    currency,
+    country,
+    city,
+    maxDays,
+    willingToRelocate,
+    availability,
+  } = formData;
 
-  const handleDownloadTemplate = () => {
-    Linking.openURL("https://yourdomain.com/documents/Resume_Format.docx");
-  };
+  if (
+    !experience ||
+    !rate ||
+    !currency ||
+    !country ||
+    !city ||
+    !maxDays ||
+    !willingToRelocate ||
+    !selectedFile
+  ) {
+    Alert.alert("Validation Error", "Please fill all fields and select a resume.");
+    return;
+  }
+
+  setIsLoading(true);
+
+  try {
+    const fileUri = selectedFile.uri;
+
+    // Read file content (you can also use base64 if you want)
+    const fileContent = await FileSystem.readAsStringAsync(fileUri, {
+      encoding: FileSystem.EncodingType.UTF8,
+    });
+
+    // Simulate resume parsing (extract role or any other logic you want here)
+    const resumeText = fileContent;
+    const roleMatch = resumeText.match(/(?<=Role: ).+/i);
+    const parsedRole = roleMatch ? roleMatch[0] : "Unknown Role";
+
+    setIsLoading(false);
+
+    navigation.navigate("ResumeDetail", {
+      parsedResume: resumeText,
+      extractedRole: parsedRole,
+      formData,
+    });
+  } catch (err) {
+    console.error("Parsing error:", err);
+    setIsLoading(false);
+    Alert.alert("Error", "Could not parse the resume file.");
+  }
+};
+
+
+  const DownloadResumeTemplate = async () => {
+  const fileName = 'Resume_Format.docx';
+  const fileUrl = 'https://alpinum-consulting-bucket.s3.eu-north-1.amazonaws.com/Resume_Format.docx';
+  const filePath = FileSystem.documentDirectory + fileName;
+
+  try {
+    const result = await FileSystem.downloadAsync(fileUrl, filePath);
+    console.log('✅ File downloaded to:', result.uri);
+
+    Alert.alert('Download Complete', 'Resume template downloaded successfully.');
+
+    save(result.uri);
+  } catch (error) {
+    console.error('❌ Download Error:', error);
+    Alert.alert('Download Failed', 'Could not download the resume template. Please try again.');
+  }
+};
+
+const save = (uri) =>{
+  shareAsync(uri);
+} 
 
   return (
     <View style={{ flex: 1 }}>
@@ -112,7 +157,7 @@ export default function Resume({ navigation }) {
         </View>
         <TouchableOpacity
           style={styles.downloadButton}
-          onPress={handleDownloadTemplate}
+          onPress={DownloadResumeTemplate}
         >
           <View style={styles.buttonContent}>
             <Ionicons

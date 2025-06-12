@@ -7,14 +7,16 @@ import {
   StyleSheet,
   Image,
   CheckBox,
-  Alert
+  Alert,
+  ActivityIndicator
 } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { setCredentials } from '../context/slice';
+import { setToken, setUser } from '../context/slice';
+import Toast from 'react-native-toast-message';
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('numan.tariq936@gmail.com');
-  const [password, setPassword] = useState('Newflat@008');
+  const [password, setPassword] = useState('Newflat@007');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -44,19 +46,29 @@ export default function Login({ navigation }) {
       console.log("login++", data)
 
       if (response.ok) {
-        dispatch(setCredentials({
-          user: data.user,
-          token: data.token,
-        }));
-        Alert.alert('Success', 'Login successful!');
-        // Optionally store token/data and navigate
+        dispatch(setUser(data.user));   
+        dispatch(setToken(data.token)); 
+        
+        Toast.show({
+          type:'success',
+          text1:'Success',
+          text2: 'Login successful'
+        })
         navigation.navigate('BottomTabs')
       } else {
-        Alert.alert('Login Failed', data.message || 'Invalid credentials');
+        Toast.show({
+        type: 'error',
+        text1: 'Login Failed',
+        text2: data.message || 'Invalid credentials',
+      });
       }
     } catch (error) {
       console.error('Login Error:', error);
-      Alert.alert('Error', 'Something went wrong. Please try again.');
+      Toast.show({
+      type: 'error',
+      text1: 'Error',
+      text2: 'Something went wrong. Please try again.',
+    });
     } finally {
       setLoading(false);
     }
@@ -101,7 +113,7 @@ export default function Login({ navigation }) {
       {/* Sign In Button */}
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={loading}>
         <Text style={styles.loginButtonText}>
-          {loading ? 'Signing In...' : 'Sign In'}
+          {loading ? <ActivityIndicator color="#fff" /> : 'Sign In'}
         </Text>
       </TouchableOpacity>
 
@@ -116,7 +128,6 @@ export default function Login({ navigation }) {
   );
 }
 
-// STYLES
 const styles = StyleSheet.create({
   container: {
     flex: 1,
