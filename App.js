@@ -18,6 +18,7 @@ import BottomTabs from "./src/BottomNavigation/BottomTabs";
 import ChangePassword from "./src/Components/ChnagePassword";
 import ResumeDetail from "./src/Screens/ResumeDetail";
 import { setToken } from "./src/context/slice.jsx";
+import ProfileOverview from "./src/Screens/ProfileOverview.jsx";
 
 const Stack = createNativeStackNavigator();
 
@@ -58,6 +59,7 @@ function MainApp() {
           <Stack.Screen name="BottomTabs" component={BottomTabs} />
           <Stack.Screen name="ChangePassword" component={ChangePassword} />
           <Stack.Screen name="ResumeDetail" component={ResumeDetail} />
+          <Stack.Screen name="ProfileOverview" component={ProfileOverview} />
         </>
       ) : (
         <>

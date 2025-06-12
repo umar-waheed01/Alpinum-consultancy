@@ -241,6 +241,27 @@ export default function ResumeDetail({ route, navigation }) {
 
   const [dropdownVisible, setDropdownVisible] = useState(null);
 
+  const handleSubmitStaticData = () => {
+  const staticPayload = {
+    designation: "iT",
+    degreeInfo: "Bs iT – University of Gujrat – 2020 - 2024",
+    experience: "2",
+    rate: 40,
+    currency: "INR",
+    city: "Gujranwala",
+    country: "Pakistan",
+    maxDays: 5,
+    willingToRelocate: "Yes",
+    availability: "2025-06-28T00:00:00.000Z",
+    languages: ["react native", "react js", "AND SO ON."],
+    tools: ["javascript tool", "TOOL 2", "AND SO ON."],
+    methodologies: ["METHODOLOGY g7 tec", "METHODOLOGY 2", "AND SO ON."],
+  };
+
+  navigation.navigate("ProfileOverview", { profile: staticPayload });
+};
+
+
   const handleSubmit = async () => {
     try {
       if (!uploadedFiles?.uri) {
@@ -417,7 +438,7 @@ export default function ResumeDetail({ route, navigation }) {
       {renderDropdown("Tools", toolsOptions, "tools")}
       {renderDropdown("Methodologies", methodologiesOptions, "methodologies")}
 
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmitStaticData}>
         <Text style={styles.submitText}>Submit</Text>
       </TouchableOpacity>
     </ScrollView>
