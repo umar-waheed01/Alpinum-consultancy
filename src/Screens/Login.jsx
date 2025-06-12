@@ -13,6 +13,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { setToken, setUser } from '../context/slice';
 import Toast from 'react-native-toast-message';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('numan.tariq936@gmail.com');
@@ -43,11 +44,12 @@ export default function Login({ navigation }) {
       });
 
       const data = await response.json();
-      console.log("login++", data)
+      console.log("login++", data.user)
 
       if (response.ok) {
         dispatch(setUser(data.user));   
         dispatch(setToken(data.token)); 
+        await AsyncStorage.setItem('userToken', data.token);
         
         Toast.show({
           type:'success',

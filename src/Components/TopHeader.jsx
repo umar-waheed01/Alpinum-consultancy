@@ -4,8 +4,9 @@ import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-m
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from 'react-redux';
-import { setToken } from '../context/slice';
+import { setToken, setUser } from '../context/slice';
 import Toast from 'react-native-toast-message';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const TopHeader = ({ title }) => {
@@ -43,6 +44,8 @@ const TopHeader = ({ title }) => {
       });
 
       dispatch(setToken(null));
+      dispatch(setUser(null));
+      await AsyncStorage.removeItem('userToken');
       navigation.replace('Login');
     }
   } catch (error) {

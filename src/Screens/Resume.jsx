@@ -18,10 +18,13 @@ import * as DocumentPicker from "expo-document-picker";
 import RNPickerSelect from "react-native-picker-select";
 import * as FileSystem from 'expo-file-system';
 import {shareAsync} from 'expo-sharing';
+import { useNavigation } from "@react-navigation/native";
 
-export default function Resume({ navigation }) {
-  const { token } = useSelector((state) => state.auth);
+export default function Resume() {
   const [selectedFile, setSelectedFile] = useState(null);
+  const token = useSelector((state) => state.auth.token);
+  const navigation = useNavigation()
+  
 
   const [formData, setFormData] = useState({
     experience: "",
@@ -49,9 +52,9 @@ export default function Resume({ navigation }) {
 
       if (!result.canceled) {
         const file = result.assets[0];
-        setSelectedFile(file); // Save selected file
+        setSelectedFile(file); 
       } else {
-        setSelectedFile(null); // Optional: reset if cancelled
+        setSelectedFile(null); 
       }
     } catch (error) {
       console.warn("File selection failed:", error);
@@ -98,30 +101,36 @@ export default function Resume({ navigation }) {
   setIsLoading(true);
 
   try {
-    const fileUri = selectedFile.uri;
+  const fileInfo = await FileSystem.uploadAsync(
+    "https://alpinum-consulting.vercel.app/api/parse-resume",
+    selectedFile.uri,
+    {
+      httpMethod: "POST",
+      uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+      fieldName: "resume",
+    }
+  );
+  console.log("fileInfo++++++",fileInfo)
 
-    // Read file content (you can also use base64 if you want)
-    const fileContent = await FileSystem.readAsStringAsync(fileUri, {
-      encoding: FileSystem.EncodingType.UTF8,
-    });
+  const parsed = JSON.parse(fileInfo.body);
+  console.log("parsed+++++",parsed)
 
-    // Simulate resume parsing (extract role or any other logic you want here)
-    const resumeText = fileContent;
-    const roleMatch = resumeText.match(/(?<=Role: ).+/i);
-    const parsedRole = roleMatch ? roleMatch[0] : "Unknown Role";
+  navigation.navigate("ResumeDetail", {
+    parsedResume: parsed,
+    formData: {
+    ...formData,
+    availability: formData.availability.toISOString(), 
+  },
+    token,
+    uploadedFiles: selectedFile,
+  });
 
-    setIsLoading(false);
+} catch (err) {
+  console.error("Upload/Parsing error:", err);
+  setIsLoading(false);
+  Alert.alert("Error", "Could not upload and parse resume.");
+}
 
-    navigation.navigate("ResumeDetail", {
-      parsedResume: resumeText,
-      extractedRole: parsedRole,
-      formData,
-    });
-  } catch (err) {
-    console.error("Parsing error:", err);
-    setIsLoading(false);
-    Alert.alert("Error", "Could not parse the resume file.");
-  }
 };
 
 
