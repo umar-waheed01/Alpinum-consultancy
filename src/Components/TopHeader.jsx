@@ -64,7 +64,7 @@ const TopHeader = ({ title }) => {
 
   return (
     <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('BottomTabs')}>
+        <TouchableOpacity>
             <Image source={require('../Images/old-logo.png')} style={styles.logo} />
         </TouchableOpacity>
 
@@ -79,6 +79,10 @@ const TopHeader = ({ title }) => {
           <MenuOption onSelect={handleLogout} text="Logout" />
         </MenuOptions>
       </Menu>
+      <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
+  <Ionicons name="menu-outline" size={28} color="#000" />
+</TouchableOpacity>
+
     </View>
   );
 };

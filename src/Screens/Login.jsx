@@ -56,7 +56,7 @@ export default function Login({ navigation }) {
           text1:'Success',
           text2: 'Login successful'
         })
-        navigation.navigate('BottomTabs')
+        navigation.navigate('DrawerNavigator')
       } else {
         Toast.show({
         type: 'error',

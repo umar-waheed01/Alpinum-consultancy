@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -10,12 +11,15 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 import { useSelector } from 'react-redux';
 
 const ProfileOverview = () => {
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
   const token = useSelector((state) => state.auth.token);
+  const navigation = useNavigation();
+  
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -29,7 +33,11 @@ const ProfileOverview = () => {
 
         const data = await response.json();
         if (!response.ok) {
-          Alert.alert("Error", data?.error || "Failed to fetch profile");
+          Toast.show({
+            type:'error',
+            text1:'Error',
+            text2: data?.error || "Failed to fetch profile"
+          })
         } else {
           setProfileData(data);
         }
@@ -65,7 +73,12 @@ const ProfileOverview = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.heading}>Profile Overview</Text>
       <View style={styles.profileSection}>
-        <Image source={{ uri: CV.imageUrl }} style={styles.profileImage} />
+        <View style={styles.imageContainer}>
+          <Image source={{ uri: CV.imageUrl }} style={styles.profileImage} />
+          <TouchableOpacity style={styles.editButton} onPress={()=>navigation.navigate('EditProfile')}>
+            <Text style={styles.editText}>Edit Profile</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.profileInfo}>
           <Text style={styles.role}>{CV.designation}</Text>
           <Text style={styles.name}>{`${user.firstName} ${user.lastName}`}</Text>
@@ -113,21 +126,25 @@ const ProfileOverview = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: 20,
     backgroundColor: '#f8f9fa',
   },
   heading: {
     fontSize: 22,
     fontWeight: '700',
     marginBottom: 12,
+    marginTop: 12,
   },
   profileSection: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
     padding: 12,
     borderRadius: 8,
     marginBottom: 20,
-    alignItems: 'center',
+    // alignItems: 'center',
+  },
+  imageContainer:{
+    // gap:5
   },
   profileImage: {
     width: 100,
@@ -139,6 +156,7 @@ const styles = StyleSheet.create({
   },
   profileInfo: {
     flex: 1,
+    marginLeft:6
   },
   role: {
     fontSize: 16,
@@ -176,6 +194,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+    editButton: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: "#504CFE",
+    borderRadius: 8,
+    width:100,
+    height:45
+  },
+  editText: {
+    color: "#fff",
+    fontWeight: "600",
   },
 });
 
@@ -327,16 +357,16 @@ export default ProfileOverview;
 //     paddingVertical: 4,
 //     borderRadius: 6,
 //   },
-//   editButton: {
-//     marginTop: 10,
-//     padding: 10,
-//     backgroundColor: "#504CFE",
-//     borderRadius: 8,
-//   },
-//   editText: {
-//     color: "#fff",
-//     fontWeight: "600",
-//   },
+  // editButton: {
+  //   marginTop: 10,
+  //   padding: 10,
+  //   backgroundColor: "#504CFE",
+  //   borderRadius: 8,
+  // },
+  // editText: {
+  //   color: "#fff",
+  //   fontWeight: "600",
+  // },
 //   detailsCard: {
 //     backgroundColor: "#fff",
 //     padding: 20,

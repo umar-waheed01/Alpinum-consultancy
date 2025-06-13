@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import React, { useEffect, useState } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
@@ -14,11 +15,12 @@ import Toast from "react-native-toast-message";
 import Login from "./src/Screens/Login";
 import SignUp from "./src/Screens/SignUp";
 import ForgotPassword from "./src/Screens/ForgotPassword";
-import BottomTabs from "./src/BottomNavigation/BottomTabs";
+import DrawerNavigator from "./src/BottomNavigation/DrawerNavigator";
 import ChangePassword from "./src/Components/ChnagePassword";
 import ResumeDetail from "./src/Screens/ResumeDetail";
 import { setToken } from "./src/context/slice.jsx";
 import ProfileOverview from "./src/Screens/ProfileOverview.jsx";
+import EditProfile from './src/Screens/EditProfile.jsx';
 
 const Stack = createNativeStackNavigator();
 
@@ -56,10 +58,11 @@ function MainApp() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {token ? (
         <>
-          <Stack.Screen name="BottomTabs" component={BottomTabs} />
+          <Stack.Screen name="DrawerNavigator" component={DrawerNavigator} />
           <Stack.Screen name="ChangePassword" component={ChangePassword} />
           <Stack.Screen name="ResumeDetail" component={ResumeDetail} />
           <Stack.Screen name="ProfileOverview" component={ProfileOverview} />
+          <Stack.Screen name="EditProfile" component={EditProfile} />
         </>
       ) : (
         <>

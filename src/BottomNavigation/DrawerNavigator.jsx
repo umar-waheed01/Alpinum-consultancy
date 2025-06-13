@@ -1,22 +1,21 @@
 import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, Text } from 'react-native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Dashboard from '../Screens/Dashboard';
 import Resume from '../Screens/Resume';
 import Profile from '../Screens/Profile';
 import Training from '../Screens/Training';
+import CustomDrawerContent from '../Components/CustomDrawerContent';
 
-const Tab = createBottomTabNavigator();
+const Drawer = createDrawerNavigator();
 
-
-const BottomTabs = () => {
+const DrawerNavigator = () => {
   return (
-    <Tab.Navigator
+    <Drawer.Navigator
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
+        drawerIcon: ({ focused, size, color }) => {
           let iconName;
-
           switch (route.name) {
             case 'Dashboard':
               iconName = focused ? 'speedometer' : 'speedometer-outline';
@@ -34,16 +33,17 @@ const BottomTabs = () => {
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#f47920',
-        tabBarInactiveTintColor: 'gray',
+        drawerActiveTintColor: '#f47920',
+        drawerInactiveTintColor: 'gray',
+        headerShown: false,
       })}
     >
-      <Tab.Screen name="Dashboard" component={Dashboard} options={{headerShown: false}} />
-      <Tab.Screen name="Resume" component={Resume} options={{headerShown: false}} />
-      <Tab.Screen name="Profile" component={Profile} options={{headerShown: false}} />
-      <Tab.Screen name="Training" component={Training} options={{headerShown: false}} />
-    </Tab.Navigator>
+      <Drawer.Screen name="Dashboard" component={Dashboard} />
+      <Drawer.Screen name="Resume" component={Resume} />
+      <Drawer.Screen name="Profile" component={Profile} />
+      <Drawer.Screen name="Training" component={Training} />
+    </Drawer.Navigator>
   );
 };
 
-export default BottomTabs;
+export default DrawerNavigator;
