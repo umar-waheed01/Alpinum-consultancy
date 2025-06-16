@@ -217,17 +217,6 @@ const methodologiesOptions = [
 
 export default function ResumeDetail({ route, navigation }) {
   const { parsedResume, formData, uploadedFiles, token } = route.params;
-  console.log("token", token);
-  console.log("uploadedFiles", uploadedFiles);
-  console.log("formData", formData);
-  console.log("parsedResume", parsedResume);
-
-  const safeArray = (val) =>
-    Array.isArray(val)
-      ? val
-      : typeof val === "string"
-      ? val.split(",").map((v) => v.trim())
-      : [];
 
   const [cvForm, setCVForm] = useState({
     designation: parsedResume?.designation || "",
@@ -249,29 +238,24 @@ export default function ResumeDetail({ route, navigation }) {
       return;
     }
 
-    console.log("📦 formData+++", JSON.stringify(formData, null, 2));
-
-
     const skills = cvForm?.skills || {};
     const payload = {
-  yearsExperience: String(formData.experience || ""),
-  hourlyRate: String(formData.rate || ""),
-  currency: formData.currency || "",
-  country: formData.country || "",
-  city: formData.city || "",
-  onSiteWorkDays: String(formData.maxDays || ""),
-  isRelocate: formData.willingToRelocate === "Yes",
-  availability: new Date(formData.availability).toISOString(),
-  designation: cvForm?.designation || "",
-  degreeInfo: cvForm?.degreeInfo?.degree || "",
-  skills: {
-    languages: skills?.languages || [],
-    tools: skills?.tools || [],
-    methodologies: skills?.methodologies || [],
-  }
-};
-
-    console.log("🧾 payload+++", JSON.stringify(payload, null, 2));
+      yearsExperience: String(formData.experience || ""),
+      hourlyRate: String(formData.rate || ""),
+      currency: formData.currency || "",
+      country: formData.country || "",
+      city: formData.city || "",
+      onSiteWorkDays: String(formData.maxDays || ""),
+      isRelocate: formData.willingToRelocate === "Yes",
+      availability: new Date(formData.availability).toISOString(),
+      designation: cvForm?.designation || "",
+      degreeInfo: cvForm?.degreeInfo?.degree || "",
+      skills: {
+        languages: skills.languages || [],
+        tools: skills.tools || [],
+        methodologies: skills.methodologies || [],
+      },
+    };
 
     const data = new FormData();
     data.append("file", {
@@ -283,11 +267,6 @@ export default function ResumeDetail({ route, navigation }) {
     });
 
     data.append("cvInfo", JSON.stringify(payload));
-
-    console.log("📤 FormData contents:");
-    for (let [key, value] of data.entries()) {
-      console.log(`${key}:`, value);
-    }
 
     const response = await fetch(
       "https://alpinum-consulting.vercel.app/api/contractor-profile",
@@ -301,7 +280,6 @@ export default function ResumeDetail({ route, navigation }) {
     );
 
     const result = await response.json();
-    console.log("🧾 API Result:", result);
 
     if (response.status === 201 || result.message === "success") {
       Alert.alert("Success", "Resume saved!");
@@ -310,7 +288,6 @@ export default function ResumeDetail({ route, navigation }) {
       Alert.alert("Error", "Upload failed.");
     }
   } catch (err) {
-    console.error("❌ Submit error:", err);
     Alert.alert("Error", "Something went wrong.");
   }
 };

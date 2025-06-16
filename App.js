@@ -1,58 +1,28 @@
 import 'react-native-gesture-handler';
-import React, { useEffect, useState } from "react";
-import { View, ActivityIndicator } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Provider, useDispatch, useSelector } from "react-redux";
-import store from "./src/context/store.jsx";
-import { MenuProvider } from "react-native-popup-menu";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import Toast from "react-native-toast-message";
-
-// Redux slice actions
+import React from 'react';
+import { View, ActivityIndicator } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Provider, useSelector } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import store, { persistor } from './src/context/store'; 
+import { MenuProvider } from 'react-native-popup-menu';
+import Toast from 'react-native-toast-message';
 
 // Screens
-import Login from "./src/Screens/Login";
-import SignUp from "./src/Screens/SignUp";
-import ForgotPassword from "./src/Screens/ForgotPassword";
-import DrawerNavigator from "./src/BottomNavigation/DrawerNavigator";
-import ChangePassword from "./src/Components/ChnagePassword";
-import ResumeDetail from "./src/Screens/ResumeDetail";
-import { setToken } from "./src/context/slice.jsx";
-import ProfileOverview from "./src/Screens/ProfileOverview.jsx";
-import EditProfile from './src/Screens/EditProfile.jsx';
+import Login from './src/Screens/Login';
+import SignUp from './src/Screens/SignUp';
+import ForgotPassword from './src/Screens/ForgotPassword';
+import DrawerNavigator from './src/BottomNavigation/DrawerNavigator';
+import ChangePassword from './src/Components/ChnagePassword';
+import ResumeDetail from './src/Screens/ResumeDetail';
+import ProfileOverview from './src/Screens/ProfileOverview';
+import EditProfile from './src/Screens/EditProfile';
 
 const Stack = createNativeStackNavigator();
 
-// 🔁 Inner app with access to Redux
 function MainApp() {
   const token = useSelector((state) => state.auth.token);
-  const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const checkStoredToken = async () => {
-      try {
-        const storedToken = await AsyncStorage.getItem("userToken");
-        if (storedToken) {
-          dispatch(setToken(storedToken));
-        }
-      } catch (error) {
-        console.error("Error reading token", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    checkStoredToken();
-  }, []);
-
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -75,16 +45,24 @@ function MainApp() {
   );
 }
 
-// 🔁 Top-level app
 export default function App() {
   return (
     <Provider store={store}>
-      <MenuProvider>
-        <NavigationContainer>
-          <MainApp />
-          <Toast />
-        </NavigationContainer>
-      </MenuProvider>
+      <PersistGate
+        loading={
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <ActivityIndicator size="large" />
+          </View>
+        }
+        persistor={persistor}
+      >
+        <MenuProvider>
+          <NavigationContainer>
+            <MainApp />
+            <Toast />
+          </NavigationContainer>
+        </MenuProvider>
+      </PersistGate>
     </Provider>
   );
 }

@@ -13,11 +13,10 @@ import {
 import { useDispatch } from 'react-redux';
 import { setToken, setUser } from '../context/slice';
 import Toast from 'react-native-toast-message';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Login({ navigation }) {
-  const [email, setEmail] = useState('numan.tariq936@gmail.com');
-  const [password, setPassword] = useState('Newflat@007');
+  const [email, setEmail] = useState('hafiztalalaqeel1@gmail.com');
+  const [password, setPassword] = useState('Newflat@008');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -25,56 +24,62 @@ export default function Login({ navigation }) {
 
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Email and Password are required.');
-      return;
-    }
+  if (!email || !password) {
+    Alert.alert('Error', 'Email and Password are required.');
+    return;
+  }
 
-    setLoading(true);
-    try {
-      const response = await fetch('https://alpinum-consulting.vercel.app/api/auth/sign-in', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+  setLoading(true);
+  try {
+    const response = await fetch('https://alpinum-consulting.vercel.app/api/auth/sign-in', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    });
+
+    const data = await response.json();
+    console.log("📥 Login API Response:", data);
+
+    if (response.ok) {
+      dispatch(setUser(data.user));   
+      dispatch(setToken(data.token)); 
+
+      // ⬇️ Wait a tick then log Redux state (delayed for reducer to update)
+      setTimeout(() => {
+        console.log("🧠 User stored in Redux:", data.user);
+        console.log("🔐 Token stored in Redux:", data.token);
+      }, 100);
+
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Login successful'
       });
 
-      const data = await response.json();
-      console.log("login++", data.user)
-
-      if (response.ok) {
-        dispatch(setUser(data.user));   
-        dispatch(setToken(data.token)); 
-        await AsyncStorage.setItem('userToken', data.token);
-        
-        Toast.show({
-          type:'success',
-          text1:'Success',
-          text2: 'Login successful'
-        })
-        navigation.navigate('DrawerNavigator')
-      } else {
-        Toast.show({
+    } else {
+      Toast.show({
         type: 'error',
         text1: 'Login Failed',
         text2: data.message || 'Invalid credentials',
       });
-      }
-    } catch (error) {
-      console.error('Login Error:', error);
-      Toast.show({
+    }
+  } catch (error) {
+    console.error('🚨 Login Error:', error);
+    Toast.show({
       type: 'error',
       text1: 'Error',
       text2: 'Something went wrong. Please try again.',
     });
-    } finally {
-      setLoading(false);
-    }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
+
 
 
   return (
