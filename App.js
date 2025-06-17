@@ -13,11 +13,13 @@ import Toast from 'react-native-toast-message';
 import Login from './src/Screens/Login';
 import SignUp from './src/Screens/SignUp';
 import ForgotPassword from './src/Screens/ForgotPassword';
-import DrawerNavigator from './src/BottomNavigation/DrawerNavigator';
 import ChangePassword from './src/Components/ChnagePassword';
 import ResumeDetail from './src/Screens/ResumeDetail';
 import ProfileOverview from './src/Screens/ProfileOverview';
 import EditProfile from './src/Screens/EditProfile';
+import DrawerNavigator from './src/Navigations/DrawerNavigator';
+import CompanyProfile from './src/Screens/CompanyProfile';
+import JobDetail from './src/Screens/JobDetail';
 
 const Stack = createNativeStackNavigator();
 
@@ -33,6 +35,8 @@ function MainApp() {
           <Stack.Screen name="ResumeDetail" component={ResumeDetail} />
           <Stack.Screen name="ProfileOverview" component={ProfileOverview} />
           <Stack.Screen name="EditProfile" component={EditProfile} />
+          <Stack.Screen name="CompanyProfile" component={CompanyProfile} />
+          <Stack.Screen name="JobDetail" component={JobDetail} />
         </>
       ) : (
         <>

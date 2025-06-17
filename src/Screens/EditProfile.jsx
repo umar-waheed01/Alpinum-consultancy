@@ -1,5 +1,5 @@
 // React Native version of your Edit Profile screen (Expo-compatible)
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,16 +11,21 @@ import {
   ActivityIndicator,
   Alert,
   Modal,
-} from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import Toast from 'react-native-toast-message';
-import { useSelector } from 'react-redux';
+} from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import Toast from "react-native-toast-message";
+import { useSelector } from "react-redux";
+import TopHeader from "../Components/TopHeader";
 
-const EditProfileScreen = () => {
+const EditProfile = () => {
   const token = useSelector((state) => state.auth.token);
   const [cvInfo, setCvInfo] = useState(null);
   const [myInfo, setMyInfo] = useState(null);
-  const [socialLink, setSocialLink] = useState({ github: '', twitter: '', linkedIn: '' });
+  const [socialLink, setSocialLink] = useState({
+    github: "",
+    twitter: "",
+    linkedIn: "",
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [previewUri, setPreviewUri] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
@@ -100,7 +105,7 @@ const EditProfileScreen = () => {
     { value: "Verilog", label: "Verilog" },
     { value: "Zig", label: "Zig" },
   ];
-const toolsOptions = [
+  const toolsOptions = [
     { value: "Cadence Simulator", label: "Cadence Simulator" },
     { value: "ModelSim", label: "ModelSim" },
     { value: "Vivado", label: "Vivado" },
@@ -205,7 +210,7 @@ const toolsOptions = [
     { value: "Notion", label: "Notion" },
   ];
 
-const methodologiesOptions = [
+  const methodologiesOptions = [
     { value: "Agile", label: "Agile" },
     { value: "Scrum", label: "Scrum" },
     { value: "Kanban", label: "Kanban" },
@@ -237,25 +242,32 @@ const methodologiesOptions = [
 
   const fetchProfile = async () => {
     try {
-      const response = await fetch('https://alpinum-consulting.vercel.app/api/contractor-profile', {
-        method: 'GET',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetch(
+        "https://alpinum-consulting.vercel.app/api/contractor-profile",
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       const data = await response.json();
       if (!response.ok) {
-        Toast.show({ type: 'error', text1: 'Error', text2: data.error || 'Failed to load profile' });
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: data.error || "Failed to load profile",
+        });
         return;
       }
       setMyInfo(data.user);
       setCvInfo(data.CV);
       const links = data.CV.socialLink || [];
       setSocialLink({
-        twitter: links.find((l) => l.platform === 'twitter')?.url || '',
-        github: links.find((l) => l.platform === 'github')?.url || '',
-        linkedIn: links.find((l) => l.platform === 'linkedIn')?.url || '',
+        twitter: links.find((l) => l.platform === "twitter")?.url || "",
+        github: links.find((l) => l.platform === "github")?.url || "",
+        linkedIn: links.find((l) => l.platform === "linkedIn")?.url || "",
       });
     } catch (err) {
-      Alert.alert('Error', 'Something went wrong.');
+      Alert.alert("Error", "Something went wrong.");
     } finally {
       setIsLoading(false);
     }
@@ -275,305 +287,331 @@ const methodologiesOptions = [
 
   if (isLoading) {
     return (
-      <View style={styles.centered}><ActivityIndicator size="large" /></View>
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" />
+      </View>
     );
   }
 
   if (!myInfo || !cvInfo) {
     return (
-      <View style={styles.centered}><Text>Failed to load profile</Text></View>
+      <View style={styles.centered}>
+        <Text>Failed to load profile</Text>
+      </View>
     );
   }
 
   const handleSubmit = async () => {
-  setIsLoading(true);
-  try {
-    const formData = new FormData();
+    setIsLoading(true);
+    try {
+      const formData = new FormData();
 
-    if (profileImage) {
-      const fileName = profileImage.uri.split('/').pop();
-      const match = /\.(\w+)$/.exec(fileName);
-      const type = match ? `image/${match[1]}` : `image`;
+      if (profileImage) {
+        const fileName = profileImage.uri.split("/").pop();
+        const match = /\.(\w+)$/.exec(fileName);
+        const type = match ? `image/${match[1]}` : `image`;
 
-      formData.append("profileImage", {
-        uri: profileImage.uri,
-        name: fileName,
-        type,
-      });
+        formData.append("profileImage", {
+          uri: profileImage.uri,
+          name: fileName,
+          type,
+        });
+      }
+
+      formData.append(
+        "data",
+        JSON.stringify({
+          user: myInfo,
+          CV: cvInfo,
+          socialLinks: socialLink,
+        })
+      );
+
+      const response = await fetch(
+        "https://alpinum-consulting.vercel.app/api/contractor-profile",
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        Toast.show({
+          type: "error",
+          text1: "Update Failed",
+          text2: result.error || "Unknown error",
+        });
+        return;
+      }
+
+      Toast.show({ type: "success", text1: "Profile Updated Successfully" });
+    } catch (err) {
+      Alert.alert("Error", err.message || "Something went wrong.");
+    } finally {
+      setIsLoading(false);
     }
-
-    formData.append("data", JSON.stringify({
-      user: myInfo,
-      CV: cvInfo,
-      socialLinks: socialLink,
-    }));
-
-    const response = await fetch("https://alpinum-consulting.vercel.app/api/contractor-profile", {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      Toast.show({ type: "error", text1: "Update Failed", text2: result.error || "Unknown error" });
-      return;
-    }
-
-    Toast.show({ type: "success", text1: "Profile Updated Successfully" });
-  } catch (err) {
-    Alert.alert("Error", err.message || "Something went wrong.");
-  } finally {
-    setIsLoading(false);
-  }
-};
-
+  };
 
   const toggleOption = (type, value) => {
-  const selected = cvInfo[type] || [];
-  const updated = selected.includes(value)
-    ? selected.filter((v) => v !== value)
-    : [...selected, value];
+    const selected = cvInfo[type] || [];
+    const updated = selected.includes(value)
+      ? selected.filter((v) => v !== value)
+      : [...selected, value];
 
-  setCvInfo((prev) => ({
-    ...prev,
-    [type]: updated,
-  }));
-};
-
+    setCvInfo((prev) => ({
+      ...prev,
+      [type]: updated,
+    }));
+  };
 
   const renderDropdown = (label, options, type) => {
-       const selectedItems = cvInfo[type] || []
-  
-      return (
-        <View style={styles.dropdownWrapper}>
-          <Text style={styles.label}>{label}</Text>
-  
-          <TouchableOpacity
-            style={styles.dropdownInput}
-            onPress={() => setDropdownVisible(type)}
-          >
-            <View style={{ flexWrap: "wrap", flexDirection: "row" }}>
-              {selectedItems.length > 0 ? (
-                selectedItems.map((item, idx) => (
-                  <Text
-                    key={idx}
-                    style={{
-                      backgroundColor: "#f0f0f0",
-                      margin: 2,
-                      paddingHorizontal: 8,
-                      paddingVertical: 4,
-                      borderRadius: 6,
-                    }}
-                  >
-                    {item}
-                  </Text>
-                ))
-              ) : (
-                <Text>Select {label}</Text>
-              )}
-            </View>
-          </TouchableOpacity>
-  
-          {/* MODAL */}
-          {dropdownVisible === type && (
-            <Modal visible transparent animationType="fade">
-              <View style={styles.modalOverlay}>
-                <View style={styles.modalContainer}>
-                  <ScrollView contentContainerStyle={styles.modalScrollContent}>
-                    <Text style={styles.label}>Choose {label}</Text>
-                    {options.map((option) => {
-                      const value = option.value;
-                      const labelText = option.label;
-                      const isSelected = selectedItems.includes(value);
-  
-                      return (
-                        <TouchableOpacity
-                          key={value}
-                          onPress={() => toggleOption(type, value)}
-                          style={[
-                            styles.optionItem,
-                            isSelected && styles.optionSelected,
-                          ]}
+    const selectedItems = cvInfo[type] || [];
+
+    return (
+      <View style={styles.dropdownWrapper}>
+        <Text style={styles.label}>{label}</Text>
+
+        <TouchableOpacity
+          style={styles.dropdownInput}
+          onPress={() => setDropdownVisible(type)}
+        >
+          <View style={{ flexWrap: "wrap", flexDirection: "row" }}>
+            {selectedItems.length > 0 ? (
+              selectedItems.map((item, idx) => (
+                <Text
+                  key={idx}
+                  style={{
+                    backgroundColor: "#f0f0f0",
+                    margin: 2,
+                    paddingHorizontal: 8,
+                    paddingVertical: 4,
+                    borderRadius: 6,
+                  }}
+                >
+                  {item}
+                </Text>
+              ))
+            ) : (
+              <Text>Select {label}</Text>
+            )}
+          </View>
+        </TouchableOpacity>
+
+        {/* MODAL */}
+        {dropdownVisible === type && (
+          <Modal visible transparent animationType="fade">
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContainer}>
+                <ScrollView contentContainerStyle={styles.modalScrollContent}>
+                  <Text style={styles.label}>Choose {label}</Text>
+                  {options.map((option) => {
+                    const value = option.value;
+                    const labelText = option.label;
+                    const isSelected = selectedItems.includes(value);
+
+                    return (
+                      <TouchableOpacity
+                        key={value}
+                        onPress={() => toggleOption(type, value)}
+                        style={[
+                          styles.optionItem,
+                          isSelected && styles.optionSelected,
+                        ]}
+                      >
+                        <Text
+                          style={{
+                            color: isSelected ? "#fff" : "#000",
+                            fontWeight: isSelected ? "bold" : "normal",
+                          }}
                         >
-                          <Text
-                            style={{
-                              color: isSelected ? "#fff" : "#000",
-                              fontWeight: isSelected ? "bold" : "normal",
-                            }}
-                          >
-                            {labelText}
-                          </Text>
-                        </TouchableOpacity>
-                      );
-                    })}
-                  </ScrollView>
-  
-                  <TouchableOpacity
-                    style={styles.modalCloseButton}
-                    onPress={() => setDropdownVisible(null)}
-                  >
-                    <Text style={styles.modalCloseText}>Done</Text>
-                  </TouchableOpacity>
-                </View>
+                          {labelText}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </ScrollView>
+
+                <TouchableOpacity
+                  style={styles.modalCloseButton}
+                  onPress={() => setDropdownVisible(null)}
+                >
+                  <Text style={styles.modalCloseText}>Done</Text>
+                </TouchableOpacity>
               </View>
-            </Modal>
-          )}
-        </View>
-      );
-    };
+            </View>
+          </Modal>
+        )}
+      </View>
+    );
+  };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      <Text style={styles.heading}>Edit Profile</Text>
+    <>
+      <TopHeader />
 
-      <View style={styles.imageContainer}>
-        <Image
-          source={{ uri: previewUri || cvInfo.imageUrl || 'https://via.placeholder.com/120' }}
-          style={styles.image}
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}
+      >
+        <Text style={styles.heading}>Edit Profile</Text>
+
+        <View style={styles.imageContainer}>
+          <Image
+            source={{
+              uri:
+                previewUri ||
+                cvInfo.imageUrl ||
+                "https://via.placeholder.com/120",
+            }}
+            style={styles.image}
+          />
+          <TouchableOpacity onPress={pickImage} style={styles.button}>
+            <Text style={styles.buttonText}>Choose Image</Text>
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.label}>First Name</Text>
+        <TextInput
+          value={myInfo.firstName}
+          onChangeText={(val) => setMyInfo({ ...myInfo, firstName: val })}
+          style={styles.input}
+          placeholder="Enter first name"
         />
-        <TouchableOpacity onPress={pickImage} style={styles.button}>
-          <Text style={styles.buttonText}>Choose Image</Text>
+
+        <Text style={styles.label}>Last Name</Text>
+        <TextInput
+          value={myInfo.lastName}
+          onChangeText={(val) => setMyInfo({ ...myInfo, lastName: val })}
+          style={styles.input}
+          placeholder="Enter last name"
+        />
+
+        <Text style={styles.label}>Designation</Text>
+        <TextInput
+          value={cvInfo.designation}
+          onChangeText={(val) => setCvInfo({ ...cvInfo, designation: val })}
+          style={styles.input}
+          placeholder="Enter designation"
+        />
+
+        <Text style={styles.label}>Expected Rate Per Hour</Text>
+        <TextInput
+          value={cvInfo?.hourlyRate?.toString() || ""}
+          onChangeText={(val) => setCvInfo({ ...cvInfo, hourlyRate: val })}
+          style={styles.input}
+          placeholder="Enter Expected Rate Per Hour"
+        />
+
+        <Text style={styles.label}>Maximum Working Days in Office</Text>
+        <TextInput
+          value={cvInfo?.onSiteWorkDays?.toString() || ""}
+          onChangeText={(val) => setCvInfo({ ...cvInfo, onSiteWorkDays: val })}
+          style={styles.input}
+          placeholder="Enter Maximum Working Days in Office"
+        />
+
+        <Text style={styles.label}>Years of Experience</Text>
+        <TextInput
+          value={cvInfo?.yearsExperience}
+          onChangeText={(val) => setCvInfo({ ...cvInfo, yearsExperience: val })}
+          style={styles.input}
+          placeholder="Enter Years of Experience"
+        />
+
+        <Text style={styles.label}>City</Text>
+        <TextInput
+          value={cvInfo?.city}
+          onChangeText={(val) => setCvInfo({ ...cvInfo, city: val })}
+          style={styles.input}
+          placeholder="Enter city"
+        />
+
+        <Text style={styles.label}>Country</Text>
+        <TextInput
+          value={cvInfo?.country}
+          onChangeText={(val) => setCvInfo({ ...cvInfo, country: val })}
+          style={styles.input}
+          placeholder="Enter country"
+        />
+
+        <Text style={styles.label}>Calendly URL</Text>
+        <TextInput
+          value={cvInfo?.calendlyUrl}
+          onChangeText={(val) => setCvInfo({ ...cvInfo, calendlyUrl: val })}
+          style={styles.input}
+          placeholder="Enter Calendly URL"
+        />
+
+        <Text style={styles.label}>GitHub</Text>
+        <TextInput
+          value={socialLink?.github}
+          onChangeText={(val) => setSocialLink({ ...socialLink, github: val })}
+          style={styles.input}
+          placeholder="Enter GitHub URL"
+        />
+
+        <Text style={styles.label}>LinkedIn</Text>
+        <TextInput
+          value={socialLink?.linkedIn}
+          onChangeText={(val) =>
+            setSocialLink({ ...socialLink, linkedIn: val })
+          }
+          style={styles.input}
+          placeholder="Enter LinkedIn URL"
+        />
+
+        <Text style={styles.label}>Twitter</Text>
+        <TextInput
+          value={socialLink.twitter}
+          onChangeText={(val) => setSocialLink({ ...socialLink, twitter: val })}
+          style={styles.input}
+          placeholder="Enter Twitter URL"
+        />
+
+        {renderDropdown("Languages", programmingLanguages, "languages")}
+        {renderDropdown("Tools", toolsOptions, "tools")}
+        {renderDropdown("Methodologies", methodologiesOptions, "methodologies")}
+
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+          <Text style={styles.submitText}>Save Profile</Text>
         </TouchableOpacity>
-      </View>
-
-      <Text style={styles.label}>First Name</Text>
-      <TextInput
-        value={myInfo.firstName}
-        onChangeText={(val) => setMyInfo({ ...myInfo, firstName: val })}
-        style={styles.input}
-        placeholder="Enter first name"
-      />
-
-      <Text style={styles.label}>Last Name</Text>
-      <TextInput
-        value={myInfo.lastName}
-        onChangeText={(val) => setMyInfo({ ...myInfo, lastName: val })}
-        style={styles.input}
-        placeholder="Enter last name"
-      />
-
-      <Text style={styles.label}>Designation</Text>
-      <TextInput
-        value={cvInfo.designation}
-        onChangeText={(val) => setCvInfo({ ...cvInfo, designation: val })}
-        style={styles.input}
-        placeholder="Enter designation"
-      />
-
-      <Text style={styles.label}>Expected Rate Per Hour</Text>
-      <TextInput
-        value={cvInfo?.hourlyRate?.toString() || "" }
-        onChangeText={(val) => setCvInfo({ ...cvInfo, hourlyRate: val })}
-        style={styles.input}
-        placeholder="Enter Expected Rate Per Hour"
-      />
-
-      <Text style={styles.label}>Maximum Working Days in Office</Text>
-      <TextInput
-        value={cvInfo?.onSiteWorkDays?.toString() || ""}
-        onChangeText={(val) => setCvInfo({ ...cvInfo, onSiteWorkDays: val })}
-        style={styles.input}
-        placeholder="Enter Maximum Working Days in Office"
-      />
-
-      <Text style={styles.label}>Years of Experience</Text>
-      <TextInput
-        value={cvInfo?.yearsExperience}
-        onChangeText={(val) => setCvInfo({ ...cvInfo, yearsExperience: val })}
-        style={styles.input}
-        placeholder="Enter Years of Experience"
-      />
-
-      <Text style={styles.label}>City</Text>
-      <TextInput
-        value={cvInfo?.city}
-        onChangeText={(val) => setCvInfo({ ...cvInfo, city: val })}
-        style={styles.input}
-        placeholder="Enter city"
-      />
-
-      <Text style={styles.label}>Country</Text>
-      <TextInput
-        value={cvInfo?.country}
-        onChangeText={(val) => setCvInfo({ ...cvInfo, country: val })}
-        style={styles.input}
-        placeholder="Enter country"
-      />
-
-      <Text style={styles.label}>Calendly URL</Text>
-      <TextInput
-        value={cvInfo?.calendlyUrl}
-        onChangeText={(val) => setCvInfo({ ...cvInfo, calendlyUrl: val })}
-        style={styles.input}
-        placeholder="Enter Calendly URL"
-      />
-
-      <Text style={styles.label}>GitHub</Text>
-      <TextInput
-        value={socialLink?.github}
-        onChangeText={(val) => setSocialLink({ ...socialLink, github: val })}
-        style={styles.input}
-        placeholder="Enter GitHub URL"
-      />
-
-      <Text style={styles.label}>LinkedIn</Text>
-      <TextInput
-        value={socialLink?.linkedIn}
-        onChangeText={(val) => setSocialLink({ ...socialLink, linkedIn: val })}
-        style={styles.input}
-        placeholder="Enter LinkedIn URL"
-      />
-
-      <Text style={styles.label}>Twitter</Text>
-      <TextInput
-        value={socialLink.twitter}
-        onChangeText={(val) => setSocialLink({ ...socialLink, twitter: val })}
-        style={styles.input}
-        placeholder="Enter Twitter URL"
-      />
-
-      {renderDropdown("Languages", programmingLanguages, "languages")}
-      {renderDropdown("Tools", toolsOptions, "tools")}
-      {renderDropdown("Methodologies", methodologiesOptions, "methodologies")}
-
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitText}>Save Profile</Text>
-      </TouchableOpacity>
-    </ScrollView>
+      </ScrollView>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { padding: 20, backgroundColor: '#f5f5f5'},
+  container: { padding: 20, backgroundColor: "#f5f5f5" },
   contentContainer: {
-  paddingBottom: 60,
-},
-  heading: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
-  label: { fontWeight: '600', marginTop: 12 },
+    paddingBottom: 60,
+  },
+  heading: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
+  label: { fontWeight: "600", marginTop: 12 },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
-    backgroundColor: '#fff',
+    borderColor: "#ccc",
+    backgroundColor: "#fff",
     borderRadius: 6,
     paddingHorizontal: 10,
     paddingVertical: 8,
     marginTop: 4,
   },
-  imageContainer: { alignItems: 'center', marginBottom: 20 },
+  imageContainer: { alignItems: "center", marginBottom: 20 },
   image: { width: 120, height: 120, borderRadius: 8 },
   button: {
-    backgroundColor: '#504CFE',
+    backgroundColor: "#504CFE",
     marginTop: 10,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 8,
   },
-  buttonText: { color: '#fff', fontWeight: '600' },
-  centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  buttonText: { color: "#fff", fontWeight: "600" },
+  centered: { flex: 1, justifyContent: "center", alignItems: "center" },
   dropdownWrapper: {
     marginBottom: 15,
   },
@@ -635,4 +673,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditProfileScreen;
+export default EditProfile;

@@ -9,6 +9,7 @@ import {
   Alert,
   StyleSheet,
 } from "react-native";
+import TopHeader from "../Components/TopHeader";
 
 const programmingLanguages = [
   { value: "ABAP", label: "ABAP" },
@@ -232,66 +233,65 @@ export default function ResumeDetail({ route, navigation }) {
   const [dropdownVisible, setDropdownVisible] = useState(null);
 
   const handleSubmit = async () => {
-  try {
-    if (!uploadedFiles?.uri) {
-      Alert.alert("Error", "Resume file missing.");
-      return;
-    }
-
-    const skills = cvForm?.skills || {};
-    const payload = {
-      yearsExperience: String(formData.experience || ""),
-      hourlyRate: String(formData.rate || ""),
-      currency: formData.currency || "",
-      country: formData.country || "",
-      city: formData.city || "",
-      onSiteWorkDays: String(formData.maxDays || ""),
-      isRelocate: formData.willingToRelocate === "Yes",
-      availability: new Date(formData.availability).toISOString(),
-      designation: cvForm?.designation || "",
-      degreeInfo: cvForm?.degreeInfo?.degree || "",
-      skills: {
-        languages: skills.languages || [],
-        tools: skills.tools || [],
-        methodologies: skills.methodologies || [],
-      },
-    };
-
-    const data = new FormData();
-    data.append("file", {
-      uri: uploadedFiles.uri,
-      name: uploadedFiles.name || "Resume_Format.docx",
-      type:
-        uploadedFiles.mimeType ||
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    });
-
-    data.append("cvInfo", JSON.stringify(payload));
-
-    const response = await fetch(
-      "https://alpinum-consulting.vercel.app/api/contractor-profile",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: data,
+    try {
+      if (!uploadedFiles?.uri) {
+        Alert.alert("Error", "Resume file missing.");
+        return;
       }
-    );
 
-    const result = await response.json();
+      const skills = cvForm?.skills || {};
+      const payload = {
+        yearsExperience: String(formData.experience || ""),
+        hourlyRate: String(formData.rate || ""),
+        currency: formData.currency || "",
+        country: formData.country || "",
+        city: formData.city || "",
+        onSiteWorkDays: String(formData.maxDays || ""),
+        isRelocate: formData.willingToRelocate === "Yes",
+        availability: new Date(formData.availability).toISOString(),
+        designation: cvForm?.designation || "",
+        degreeInfo: cvForm?.degreeInfo?.degree || "",
+        skills: {
+          languages: skills.languages || [],
+          tools: skills.tools || [],
+          methodologies: skills.methodologies || [],
+        },
+      };
 
-    if (response.status === 201 || result.message === "success") {
-      Alert.alert("Success", "Resume saved!");
-      navigation.navigate("ProfileOverview");
-    } else {
-      Alert.alert("Error", "Upload failed.");
+      const data = new FormData();
+      data.append("file", {
+        uri: uploadedFiles.uri,
+        name: uploadedFiles.name || "Resume_Format.docx",
+        type:
+          uploadedFiles.mimeType ||
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      });
+
+      data.append("cvInfo", JSON.stringify(payload));
+
+      const response = await fetch(
+        "https://alpinum-consulting.vercel.app/api/contractor-profile",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: data,
+        }
+      );
+
+      const result = await response.json();
+
+      if (response.status === 201 || result.message === "success") {
+        Alert.alert("Success", "Resume saved!");
+        navigation.navigate("ProfileOverview");
+      } else {
+        Alert.alert("Error", "Upload failed.");
+      }
+    } catch (err) {
+      Alert.alert("Error", "Something went wrong.");
     }
-  } catch (err) {
-    Alert.alert("Error", "Something went wrong.");
-  }
-};
-
+  };
 
   const toggleOption = (type, value) => {
     const selected = cvForm.skills[type] || [];
@@ -387,38 +387,41 @@ export default function ResumeDetail({ route, navigation }) {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.heading}>Review & Edit Parsed Resume</Text>
+    <>
+      <TopHeader />
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.heading}>Review & Edit Parsed Resume</Text>
 
-      <Text style={styles.label}>Designation</Text>
-      <TextInput
-        style={styles.input}
-        value={cvForm?.designation}
-        onChangeText={(val) =>
-          setCVForm((prev) => ({ ...prev, designation: val }))
-        }
-      />
+        <Text style={styles.label}>Designation</Text>
+        <TextInput
+          style={styles.input}
+          value={cvForm?.designation}
+          onChangeText={(val) =>
+            setCVForm((prev) => ({ ...prev, designation: val }))
+          }
+        />
 
-      <Text style={styles.label}>Degree</Text>
-      <TextInput
-        style={styles.input}
-        value={cvForm.degreeInfo.degree}
-        onChangeText={(val) =>
-          setCVForm((prev) => ({
-            ...prev,
-            degreeInfo: { ...prev.degreeInfo, degree: val },
-          }))
-        }
-      />
+        <Text style={styles.label}>Degree</Text>
+        <TextInput
+          style={styles.input}
+          value={cvForm.degreeInfo.degree}
+          onChangeText={(val) =>
+            setCVForm((prev) => ({
+              ...prev,
+              degreeInfo: { ...prev.degreeInfo, degree: val },
+            }))
+          }
+        />
 
-      {renderDropdown("Languages", programmingLanguages, "languages")}
-      {renderDropdown("Tools", toolsOptions, "tools")}
-      {renderDropdown("Methodologies", methodologiesOptions, "methodologies")}
+        {renderDropdown("Languages", programmingLanguages, "languages")}
+        {renderDropdown("Tools", toolsOptions, "tools")}
+        {renderDropdown("Methodologies", methodologiesOptions, "methodologies")}
 
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitText}>Submit</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+          <Text style={styles.submitText}>Submit</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </>
   );
 }
 

@@ -8,6 +8,10 @@ import Training from "../Screens/Training";
 import CustomDrawerContent from "../Components/CustomDrawerContent";
 import Offers from "../Screens/Offers";
 import JobPosts from "../Screens/JobPosts";
+import ProfileOverview from "../Screens/ProfileOverview";
+import EditProfile from "../Screens/EditProfile";
+import CompanyProfile from "../Screens/CompanyProfile";
+import JobDetail from "../Screens/JobDetail";
 
 const Drawer = createDrawerNavigator();
 
@@ -25,9 +29,6 @@ const DrawerNavigator = () => {
             case "Resume":
               iconName = focused ? "document-text" : "document-text-outline";
               break;
-            case "Profile":
-              iconName = focused ? "person" : "person-outline";
-              break;
             case "Training":
               iconName = focused ? "school" : "school-outline";
               break;
@@ -39,7 +40,7 @@ const DrawerNavigator = () => {
               break;
           }
 
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return iconName ? <Ionicons name={iconName} size={size} color={color} /> : null;
         },
         drawerActiveTintColor: "#f47920",
         drawerInactiveTintColor: "gray",
@@ -48,12 +49,18 @@ const DrawerNavigator = () => {
     >
       <Drawer.Screen name="Dashboard" component={Dashboard} />
       <Drawer.Screen name="Resume" component={Resume} />
-      <Drawer.Screen name="Profile" component={Profile} />
+      {/* Profile removed because it's handled in CustomDrawerContent */}
+      <Drawer.Screen name="ProfileOverview" component={ProfileOverview} />
+      <Drawer.Screen name="EditProfile" component={EditProfile} />
+
       <Drawer.Screen name="Training" component={Training} />
       <Drawer.Screen name="Offers" component={Offers} />
+      <Drawer.Screen name="CompanyProfile" component={CompanyProfile} />
       <Drawer.Screen name="JobPosts" component={JobPosts} />
+      <Drawer.Screen name="JobDetail" component={JobDetail} />
     </Drawer.Navigator>
   );
 };
+
 
 export default DrawerNavigator;

@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { useSelector } from 'react-redux';
+import TopHeader from '../Components/TopHeader';
 
 const ProfileOverview = () => {
   const [profileData, setProfileData] = useState(null);
@@ -70,6 +71,8 @@ const ProfileOverview = () => {
   const { user, CV } = profileData;
 
   return (
+    <>
+    <TopHeader/>
     <ScrollView style={styles.container}>
       <Text style={styles.heading}>Profile Overview</Text>
       <View style={styles.profileSection}>
@@ -121,6 +124,7 @@ const ProfileOverview = () => {
         ))}
       </View>
     </ScrollView>
+    </>
   );
 };
 
