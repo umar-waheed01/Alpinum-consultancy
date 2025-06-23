@@ -15,8 +15,8 @@ import { setToken, setUser } from '../context/slice';
 import Toast from 'react-native-toast-message';
 
 export default function Login({ navigation }) {
-  const [email, setEmail] = useState('hafiztalalaqeel1@gmail.com');
-  const [password, setPassword] = useState('Newflat@008');
+  const [email, setEmail] = useState('numan.rajpoot936@gmail.com');
+  const [password, setPassword] = useState('Newflat@007');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -85,7 +85,7 @@ export default function Login({ navigation }) {
   return (
     <View style={styles.container}>
       {/* Logo and App Name */}
-      <Image source={require('../Images/old-logo.png')} style={styles.logo} />
+      <Image source={require('../../src/Images/old-logo.png')} style={styles.logo} />
       <Text style={styles.appName}>Welcome Back</Text>
 
       {/* Email Field */}

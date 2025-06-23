@@ -10,16 +10,18 @@ import { MenuProvider } from 'react-native-popup-menu';
 import Toast from 'react-native-toast-message';
 
 // Screens
-import Login from './src/Screens/Login';
-import SignUp from './src/Screens/SignUp';
-import ForgotPassword from './src/Screens/ForgotPassword';
+import Login from './src/Common/Login';
+import SignUp from './src/Common/SignUp';
+import ForgotPassword from './src/Common/ForgotPassword';
 import ChangePassword from './src/Components/ChnagePassword';
-import ResumeDetail from './src/Screens/ResumeDetail';
-import ProfileOverview from './src/Screens/ProfileOverview';
-import EditProfile from './src/Screens/EditProfile';
-import DrawerNavigator from './src/Navigations/DrawerNavigator';
-import CompanyProfile from './src/Screens/CompanyProfile';
-import JobDetail from './src/Screens/JobDetail';
+import ResumeDetail from './src/Contractor/Screens/ResumeDetail';
+import ProfileOverview from './src/Contractor/Screens/ProfileOverview';
+import EditProfile from './src/Contractor/Screens/EditProfile';
+import CompanyProfile from './src/Contractor/Screens/CompanyProfile';
+import JobDetail from './src/Contractor/Screens/JobDetail';
+// import ContractorNavigator from './src/Navigations/ContractorWrapper';
+// import CompanyNavigator from './src/Navigations/CompanyNavigator';
+import RoleBasedNavigator from './src/Components/RoleBasedNavigator';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,13 +32,16 @@ function MainApp() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {token ? (
         <>
-          <Stack.Screen name="DrawerNavigator" component={DrawerNavigator} />
+          <Stack.Screen name="DrawerNavigator" component={RoleBasedNavigator} />
           <Stack.Screen name="ChangePassword" component={ChangePassword} />
           <Stack.Screen name="ResumeDetail" component={ResumeDetail} />
           <Stack.Screen name="ProfileOverview" component={ProfileOverview} />
           <Stack.Screen name="EditProfile" component={EditProfile} />
           <Stack.Screen name="CompanyProfile" component={CompanyProfile} />
           <Stack.Screen name="JobDetail" component={JobDetail} />
+
+          {/* <Stack.Screen name="CompanyNavigator" component={CompanyNavigator} /> */}
+
         </>
       ) : (
         <>

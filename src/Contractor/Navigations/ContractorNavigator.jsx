@@ -5,7 +5,7 @@ import Dashboard from "../Screens/Dashboard";
 import Resume from "../Screens/Resume";
 import Profile from "../Screens/Profile";
 import Training from "../Screens/Training";
-import CustomDrawerContent from "../Components/CustomDrawerContent";
+import CustomDrawerContent from "../../Components/ContractorDrawerContent";
 import Offers from "../Screens/Offers";
 import JobPosts from "../Screens/JobPosts";
 import ProfileOverview from "../Screens/ProfileOverview";
@@ -15,7 +15,7 @@ import JobDetail from "../Screens/JobDetail";
 
 const Drawer = createDrawerNavigator();
 
-const DrawerNavigator = () => {
+const ContractorNavigator = () => {
   return (
     <Drawer.Navigator
       drawerContent={(props) => <CustomDrawerContent {...props} />}
@@ -49,7 +49,7 @@ const DrawerNavigator = () => {
     >
       <Drawer.Screen name="Dashboard" component={Dashboard} />
       <Drawer.Screen name="Resume" component={Resume} />
-      {/* Profile removed because it's handled in CustomDrawerContent */}
+     
       <Drawer.Screen name="ProfileOverview" component={ProfileOverview} />
       <Drawer.Screen name="EditProfile" component={EditProfile} />
 
@@ -63,4 +63,4 @@ const DrawerNavigator = () => {
 };
 
 
-export default DrawerNavigator;
+export default ContractorNavigator;

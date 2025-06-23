@@ -9,7 +9,7 @@ import {
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const CustomDrawerContent = (props) => {
+const CompanyDrawerContent = (props) => {
   const [showProfileOptions, setShowProfileOptions] = useState(false);
   const activeRoute = props.state.routeNames[props.state.index];
 
@@ -42,27 +42,6 @@ const CustomDrawerContent = (props) => {
         labelStyle={[
           styles.label,
           activeRoute === 'Dashboard' && styles.activeLabel,
-        ]}
-      />
-
-      {/* Resume */}
-      <DrawerItem
-        label="Resume"
-        icon={({ size }) => (
-          <Ionicons
-            name="document-text-outline"
-            size={size}
-            color={activeRoute === 'Resume' ? '#fff' : 'gray'}
-          />
-        )}
-        onPress={() => props.navigation.navigate('Resume')}
-        style={[
-          styles.drawerItem,
-          activeRoute === 'Resume' && styles.activeItem,
-        ]}
-        labelStyle={[
-          styles.label,
-          activeRoute === 'Resume' && styles.activeLabel,
         ]}
       />
 
@@ -112,54 +91,12 @@ const CustomDrawerContent = (props) => {
 
       {/* Training */}
       <DrawerItem
-        label="Training"
+        label="Job Posts"
         icon={({ size }) => (
           <Ionicons
             name="school-outline"
             size={size}
             color={activeRoute === 'Training' ? '#fff' : 'gray'}
-          />
-        )}
-        onPress={() => props.navigation.navigate('Training')}
-        style={[
-          styles.drawerItem,
-          activeRoute === 'Training' && styles.activeItem,
-        ]}
-        labelStyle={[
-          styles.label,
-          activeRoute === 'Training' && styles.activeLabel,
-        ]}
-      />
-
-      {/* Offers */}
-      <DrawerItem
-        label="Offers"
-        icon={({ size }) => (
-          <Ionicons
-            name="pricetags-outline"
-            size={size}
-            color={activeRoute === 'Offers' ? '#fff' : 'gray'}
-          />
-        )}
-        onPress={() => props.navigation.navigate('Offers')}
-        style={[
-          styles.drawerItem,
-          activeRoute === 'Offers' && styles.activeItem,
-        ]}
-        labelStyle={[
-          styles.label,
-          activeRoute === 'Offers' && styles.activeLabel,
-        ]}
-      />
-
-      {/* Job Posts */}
-      <DrawerItem
-        label="Job Posts"
-        icon={({ size }) => (
-          <Ionicons
-            name="briefcase-outline"
-            size={size}
-            color={activeRoute === 'JobPosts' ? '#fff' : 'gray'}
           />
         )}
         onPress={() => props.navigation.navigate('JobPosts')}
@@ -170,6 +107,48 @@ const CustomDrawerContent = (props) => {
         labelStyle={[
           styles.label,
           activeRoute === 'JobPosts' && styles.activeLabel,
+        ]}
+      />
+
+      {/* Offers */}
+      <DrawerItem
+        label="Contractors"
+        icon={({ size }) => (
+          <Ionicons
+            name="pricetags-outline"
+            size={size}
+            color={activeRoute === 'Contractors' ? '#fff' : 'gray'}
+          />
+        )}
+        onPress={() => props.navigation.navigate('Contractors')}
+        style={[
+          styles.drawerItem,
+          activeRoute === 'Contractors' && styles.activeItem,
+        ]}
+        labelStyle={[
+          styles.label,
+          activeRoute === 'Contractors' && styles.activeLabel,
+        ]}
+      />
+
+      {/* Contracts */}
+      <DrawerItem
+        label="Contracts"
+        icon={({ size }) => (
+          <Ionicons
+            name="briefcase-outline"
+            size={size}
+            color={activeRoute === 'Contracts' ? '#fff' : 'gray'}
+          />
+        )}
+        onPress={() => props.navigation.navigate('Contracts')}
+        style={[
+          styles.drawerItem,
+          activeRoute === 'Contracts' && styles.activeItem,
+        ]}
+        labelStyle={[
+          styles.label,
+          activeRoute === 'Contracts' && styles.activeLabel,
         ]}
       />
     </DrawerContentScrollView>
@@ -220,4 +199,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CustomDrawerContent;
+export default CompanyDrawerContent;

@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
-import TopHeader from "./../Components/TopHeader"
+import TopHeader from "../../Components/TopHeader"
 
 const Training = () => {
   const token = useSelector((state) => state.auth.token);

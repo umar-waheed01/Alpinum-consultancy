@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useEffect } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSelector } from "react-redux";
-import TopHeader from "../Components/TopHeader";
+import TopHeader from "../../Components/TopHeader";
 
 export default function Dashboard() {
   const navigation = useNavigation();

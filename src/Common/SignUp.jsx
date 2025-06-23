@@ -118,7 +118,7 @@ export default function SignUp({ navigation }) {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Image source={require('../Images/old-logo.png')} style={styles.logo} />
+      <Image source={require('../../src/Images/old-logo.png')} style={styles.logo} />
         
       <Text style={styles.title}>Create An Account</Text>
 

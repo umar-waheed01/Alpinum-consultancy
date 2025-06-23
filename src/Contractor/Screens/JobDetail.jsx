@@ -9,7 +9,7 @@ import {
 import { useRoute } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
-import TopHeader from '../Components/TopHeader';
+import TopHeader from '../../Components/TopHeader';
 
 const JobDetail = () => {
   const { params } = useRoute();

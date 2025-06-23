@@ -15,7 +15,7 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
-import TopHeader from "../Components/TopHeader";
+import TopHeader from "../../Components/TopHeader";
 
 const EditProfile = () => {
   const token = useSelector((state) => state.auth.token);

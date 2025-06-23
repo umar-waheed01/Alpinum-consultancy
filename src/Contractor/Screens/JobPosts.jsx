@@ -11,7 +11,7 @@ import {
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
-import TopHeader from '../Components/TopHeader';
+import TopHeader from '../../Components/TopHeader';
 
 const PublicJobPostsScreen = () => {
   const token = useSelector((state) => state.auth.token);
