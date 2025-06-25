@@ -22,6 +22,7 @@ import JobDetail from './src/Contractor/Screens/JobDetail';
 // import ContractorNavigator from './src/Navigations/ContractorWrapper';
 // import CompanyNavigator from './src/Navigations/CompanyNavigator';
 import RoleBasedNavigator from './src/Components/RoleBasedNavigator';
+import CreateJobPost from './src/Company/Screens/CreateJobPost';
 
 const Stack = createNativeStackNavigator();
 
@@ -41,6 +42,7 @@ function MainApp() {
           <Stack.Screen name="JobDetail" component={JobDetail} />
 
           {/* <Stack.Screen name="CompanyNavigator" component={CompanyNavigator} /> */}
+          <Stack.Screen name="CreateJobPost" component={CreateJobPost} />
 
         </>
       ) : (
